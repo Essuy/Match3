@@ -1,0 +1,2153 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Код</name>
+    <events>
+        <variable comment="Очки игрока" constant="0" name="Score" sid="972306556599158" static="0" type="number">0</variable>
+        <variable comment="=1 Найден обмен на слитие, 0 - нет" constant="0" name="FindChange" sid="832651652608931" static="0" type="number">0</variable>
+        <variable comment="Совпадения с маской" constant="0" name="NMask" sid="100497042905131" static="0" type="number">0</variable>
+        <variable comment="Позиция на маске" constant="0" name="My" sid="840276126676616" static="0" type="number">0</variable>
+        <variable comment="Позиция на маске" constant="0" name="Mx" sid="223988346015686" static="0" type="number">0</variable>
+        <variable comment="Число возможных обменов на слития" constant="0" name="NChange" sid="686088044589688" static="0" type="number">0</variable>
+        <variable comment="Самый нижний пропуск" constant="0" name="YHole" sid="277068725706227" static="0" type="number">0</variable>
+        <variable comment="&apos;Число незакрытых пропусков в текущем столбце" constant="0" name="NHole" sid="799504905267867" static="0" type="number">0</variable>
+        <variable comment="Число групп" constant="0" name="Anlz" sid="289537036787593" static="0" type="number">0</variable>
+        <variable comment="Число группы/предыдущего поля" constant="0" name="ChBlock" sid="546414783180761" static="0" type="number">0</variable>
+        <variable comment="Число фишек в текущей группе" constant="0" name="NChBlock" sid="803346033379568" static="0" type="number">0</variable>
+        <variable constant="0" name="GameFlag" sid="985824435484732" static="0" type="number">0</variable>
+        <variable comment="Перебор игреков" constant="0" name="Y" sid="823111662992775" static="0" type="number">0</variable>
+        <variable comment="Перебор иксов" constant="0" name="X" sid="488007773513280" static="0" type="number">0</variable>
+        <variable comment="NEW_Счётчик циклов" constant="0" name="I" sid="771297551565813" static="0" type="number">0</variable>
+        <variable comment="NEW_Счётчик циклов" constant="0" name="K" sid="895160174309077" static="0" type="number">0</variable>
+        <variable comment="NEW_Счётчик циклов" constant="0" name="L" sid="933350885410277" static="0" type="number">0</variable>
+        <variable comment="NEW_Счётчик циклов" constant="0" name="N" sid="633282036038878" static="0" type="number">0</variable>
+        <variable comment="Проверка соседи ли сливаемые клетки? Нет=0 Да=1" constant="0" name="IsNear" sid="988611232661612" static="0" type="number">0</variable>
+        <variable comment="Текущий элемент, с которым нужно поменяться X" constant="0" name="CurElmUnSelX" sid="887053893381813" static="0" type="number">0</variable>
+        <variable comment="Текущий элемент, с которым нужно поменяться Y" constant="0" name="CurElmUnSelY" sid="855850565591941" static="0" type="number">0</variable>
+        <variable comment="Текущий элемент (выделенный) X" constant="0" name="CurElmSelX" sid="756474275800475" static="0" type="number">0</variable>
+        <variable comment="Текущий элемент (выделенный) Y" constant="0" name="CurElmSelY" sid="614028496504618" static="0" type="number">0</variable>
+        <variable comment="Позиция первого элемента выделения X" constant="0" name="CurElmX" sid="505225000971624" static="0" type="number">0</variable>
+        <variable comment="Позиция первого элемента выделения Y" constant="0" name="CurElmY" sid="382593998129371" static="0" type="number">0</variable>
+        <variable comment="Состояние клика на элемента" constant="0" name="ElmClk" sid="538263995377800" static="0" type="number">0</variable>
+        <variable comment="Число запусков поля с фишками" constant="0" name="NumGo" sid="367306764655437" static="0" type="number">0</variable>
+        <variable comment="Номер текущего типа элемента" constant="0" name="CurRes" sid="913336775103894" static="0" type="number">0</variable>
+        <event-block sid="626505186203362">
+            <conditions>
+                <condition id="0" name="On clicked" sid="298749003315320" type="НовоеПоле" />
+            </conditions>
+            <actions>
+                <action id="1" name="Set size" sid="265412130464386" type="ARR">
+                    <param id="0" name="Width">12</param>
+                    <param id="1" name="Height">8</param>
+                    <param id="2" name="Depth">1</param>
+                </action>
+                <action id="-9" name="Set value" sid="164551282446815" type="System">
+                    <param id="0" name="Variable">NumGo</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+                <action id="-9" name="Set value" sid="628749736843790" type="System">
+                    <param id="0" name="Variable">ElmClk</param>
+                    <param id="1" name="Value">0</param>
+                </action>
+            </actions>
+            <sub-events>
+                <comment>Очистка поля. Подготовка к новому полю с фишками</comment>
+                <event-block sid="857167194691547">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="754737131971838" type="System">
+                            <param id="0" name="Variable">NumGo</param>
+                            <param id="1" name="Comparison">4</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="110243555369235" type="Elements" />
+                    </actions>
+                </event-block>
+                <event-block sid="650254858933140">
+                    <conditions>
+                        <condition id="3" name="For each element" sid="193563179988255" type="ARR">
+                            <param id="0" name="Axes">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Clear" sid="363947820506095" type="ARR" />
+                    </actions>
+                </event-block>
+                <event-block sid="488854561691425">
+                    <conditions>
+                        <condition id="3" name="For each element" sid="309556128491485" type="ARR">
+                            <param id="0" name="Axes">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="3" name="Set at XY" sid="835854844921651" type="ARR">
+                            <param id="0" name="X">ARR.CurX</param>
+                            <param id="1" name="Y">ARR.CurY</param>
+                            <param id="2" name="Value">Round(random(9))+1</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="464875430449342" type="System">
+                            <param id="0" name="Variable">CurRes</param>
+                            <param id="1" name="Value">ARR.CurValue</param>
+                        </action>
+                        <action id="-3" name="Create object" sid="788769520611891" type="System">
+                            <param id="0" name="Object to create">Elements</param>
+                            <param id="1" name="Layer">0</param>
+                            <param id="2" name="X">Сетка.X+ARR.CurX*64</param>
+                            <param id="3" name="Y">Сетка.Y+ARR.CurY*64</param>
+                        </action>
+                        <action id="5" name="Set frame" sid="422065218362639" type="Elements">
+                            <param id="0" name="Frame number">CurRes</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="646948857914078" type="Elements">
+                            <param id="0" name="Instance variable">Type</param>
+                            <param id="1" name="Value">CurRes</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="292353701448161" type="Elements">
+                            <param id="0" name="Instance variable">PosX</param>
+                            <param id="1" name="Value">ARR.CurX</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="969989194351042" type="Elements">
+                            <param id="0" name="Instance variable">PosY</param>
+                            <param id="1" name="Value">ARR.CurY</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="238387252980662">
+                    <conditions />
+                    <actions>
+                        <action disabled="1" id="-9" name="Set value" sid="908692716109692" type="System">
+                            <param id="0" name="Variable">GameFlag</param>
+                            <param id="1" name="Value">1</param>
+                        </action>
+                        <action id="-16" name="Wait" sid="939721120095843" type="System">
+                            <param id="0" name="Seconds">2</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-group description="Когда кликают на элементы поля" sid="321510344161615" title="Клик на элементах поля (Сдвиги, поиски слитий)">
+            <sub-events>
+                <comment>ElmClk=0 - Нулевое положение. Только позиция под курсором. ElmClk=1 - Зажата кнопка на первом элементе для обмена. Происходит движение курсора.  ElmClk=2 - Отпускание курсора на втором элементе для обмена ElmClk=3 - &quot;флажок&quot; передачи на обработку сливания</comment>
+                <event-block sid="279982318782073">
+                    <conditions>
+                        <condition id="7" name="Cursor is over object" sid="199407239206429" type="Mouse">
+                            <param id="0" name="Object">Elements</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="110440012455864" type="System">
+                            <param id="0" name="Variable">CurElmX</param>
+                            <param id="1" name="Value">Elements.PosX</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="641051925412839" type="System">
+                            <param id="0" name="Variable">CurElmY</param>
+                            <param id="1" name="Value">Elements.PosY</param>
+                        </action>
+                        <action id="0" name="Set text" sid="267059716910521" type="TxtCurPos">
+                            <param id="0" name="Text">Elements.PosX&amp;&quot;, &quot;&amp;Elements.PosY</param>
+                        </action>
+                        <action id="0" name="Set text" sid="466665451253313" type="TxtNumType">
+                            <param id="0" name="Text">ARR.At(CurElmX,CurElmY)</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <comment>У Rect1 - ZOrder выше всех(!) и Rect2 окажется под ним при совпадении выделяемого и обмениваемого элемента (так и должно быть)</comment>
+                        <event-block sid="538906692063307">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="949343979074742" type="System">
+                                    <param id="0" name="Variable">ElmClk</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Set position" sid="640424262690438" type="Rect2">
+                                    <param id="0" name="X">Сетка.X+CurElmX*64</param>
+                                    <param id="1" name="Y">Сетка.Y+CurElmY*64</param>
+                                </action>
+                                <action id="0" name="Set text" sid="126996581776661" type="txtUnSelElm">
+                                    <param id="0" name="Text">CurElmX&amp;&quot;,&quot;&amp;CurElmY</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="122175938674117">
+                    <conditions>
+                        <condition id="2" name="Mouse button is down" sid="171628126975325" type="Mouse">
+                            <param id="0" name="Mouse button">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="820823326404039">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="588151422595466" type="System">
+                                    <param id="0" name="Variable">ElmClk</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="0" name="Set text" sid="342867403884058" type="txtSelElm">
+                                    <param id="0" name="Text">CurElmX&amp;&quot;, &quot;&amp;CurElmY</param>
+                                </action>
+                                <action id="-3" name="Set position" sid="723180767274708" type="Rect1">
+                                    <param id="0" name="X">Сетка.X+CurElmX*64</param>
+                                    <param id="1" name="Y">Сетка.Y+CurElmY*64</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="344382935967834" type="System">
+                                    <param id="0" name="Variable">CurElmSelX</param>
+                                    <param id="1" name="Value">CurElmX</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="441492131174896" type="System">
+                                    <param id="0" name="Variable">CurElmSelY</param>
+                                    <param id="1" name="Value">CurElmY</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="769301863186146" type="System">
+                                    <param id="0" name="Variable">ElmClk</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="260864573796230">
+                    <conditions>
+                        <condition id="3" name="On button released" sid="542087589155259" type="Mouse">
+                            <param id="0" name="Mouse button">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="880936784600448">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="981236853096374" type="System">
+                                    <param id="0" name="Variable">ElmClk</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="392539669925252" type="System">
+                                    <param id="0" name="Variable">CurElmUnSelX</param>
+                                    <param id="1" name="Value">CurElmX</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="828125710040973" type="System">
+                                    <param id="0" name="Variable">CurElmUnSelY</param>
+                                    <param id="1" name="Value">CurElmY</param>
+                                </action>
+                                <action id="0" name="Set text" sid="484267956089942" type="txtUnSelElm">
+                                    <param id="0" name="Text">CurElmUnSelX&amp;&quot;, &quot;&amp;CurElmUnSelY</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="397934034744257" type="System">
+                                    <param id="0" name="Variable">ElmClk</param>
+                                    <param id="1" name="Value">2</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="137946627708702">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="220469881078456" type="System">
+                            <param id="0" name="Variable">ElmClk</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Set position" sid="550697953250870" type="Rect1">
+                            <param id="0" name="X">-100</param>
+                            <param id="1" name="Y">-100</param>
+                        </action>
+                        <action id="-3" name="Set position" sid="667398719137947" type="Rect2">
+                            <param id="0" name="X">-100</param>
+                            <param id="1" name="Y">-100</param>
+                        </action>
+                        <action id="0" name="Set text" sid="391327792928991" type="txtSelElm">
+                            <param id="0" name="Text">&quot;()&quot;</param>
+                        </action>
+                        <action id="0" name="Set text" sid="511840438114718" type="txtUnSelElm">
+                            <param id="0" name="Text">&quot;()&quot;</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="995602211915269" type="System">
+                            <param id="0" name="Variable">ElmClk</param>
+                            <param id="1" name="Value">3</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="Проверка сливания и собственно сливание (в цифрах)" sid="873972679757436" title="Математическая обработка массива">
+            <sub-events>
+                <event-block sid="848648581769032">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="101431585543973" type="System">
+                            <param id="0" name="Variable">ElmClk</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">3</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="669850080731046" type="System">
+                            <param id="0" name="Variable">IsNear</param>
+                            <param id="1" name="Value">abs(CurElmSelX-CurElmUnSelX)+abs(CurElmSelY-CurElmUnSelY)</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="943254076184566" type="System">
+                            <param id="0" name="Variable">ElmClk</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                        <action id="0" name="Set text" sid="306743893291998" type="txtSignal">
+                            <param id="0" name="Text">IsNear</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <comment>Сливаются только соседи (При IsNear=1)</comment>
+                        <event-block sid="463248748269045">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="454126525880912" type="System">
+                                    <param id="0" name="Variable">IsNear</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action disabled="1" id="0" name="Set text" sid="770978574454643" type="txtSignal">
+                                    <param id="0" name="Text">&quot;Обмениваемые клетки не соседи!&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="435009888392345">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="129260975040268" type="System">
+                                    <param id="0" name="Variable">IsNear</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action disabled="1" id="0" name="Set text" sid="309759297948326" type="txtSignal">
+                                    <param id="0" name="Text">&quot;Обмениваемые клетки соседи!&quot;</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <comment>Копируем массив ARR в массив ARRCompare</comment>
+                                <event-block sid="347218359952194">
+                                    <conditions>
+                                        <condition id="3" name="For each element" sid="734282939554076" type="ARRCompare">
+                                            <param id="0" name="Axes">1</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="3" name="Set at XY" sid="737899222732911" type="ARRCompare">
+                                            <param id="0" name="X">ARRCompare.CurX</param>
+                                            <param id="1" name="Y">ARRCompare.CurY</param>
+                                            <param id="2" name="Value">ARR.At(ARRCompare.CurX,ARRCompare.CurY)</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <comment>Меняем местами значения обмениваемых ячеек</comment>
+                                <event-block sid="226559170284476">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="313078266100830" type="System">
+                                            <param id="0" name="Variable">IsNear</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">1</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action disabled="1" id="3" name="Set at XY" sid="311062981562219" type="ARRCompare">
+                                            <param id="0" name="X">CurElmSelX</param>
+                                            <param id="1" name="Y">CurElmSelY</param>
+                                            <param id="2" name="Value">ARR.At(CurElmUnSelX,CurElmUnSelY)</param>
+                                        </action>
+                                        <action disabled="1" id="3" name="Set at XY" sid="328175195463593" type="ARRCompare">
+                                            <param id="0" name="X">CurElmUnSelX</param>
+                                            <param id="1" name="Y">CurElmUnSelY</param>
+                                            <param id="2" name="Value">ARR.At(CurElmSelX,CurElmSelY)</param>
+                                        </action>
+                                        <action id="3" name="Set at XY" sid="940742452575928" type="ARR">
+                                            <param id="0" name="X">CurElmSelX</param>
+                                            <param id="1" name="Y">CurElmSelY</param>
+                                            <param id="2" name="Value">ARRCompare.At(CurElmUnSelX,CurElmUnSelY)</param>
+                                        </action>
+                                        <action id="3" name="Set at XY" sid="469848549420030" type="ARR">
+                                            <param id="0" name="X">CurElmUnSelX</param>
+                                            <param id="1" name="Y">CurElmUnSelY</param>
+                                            <param id="2" name="Value">ARRCompare.At(CurElmSelX,CurElmSelY)</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <comment>В массиве ARRCompare содержится исходное положение</comment>
+                                    </sub-events>
+                                </event-block>
+                                <event-block sid="266829234926482">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="901183256854541" type="Elements">
+                                            <param id="0" name="Instance variable">PosX</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">CurElmSelX</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="872068249817387" type="Elements">
+                                            <param id="0" name="Instance variable">PosY</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">CurElmSelY</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action disabled="1" id="9" name="Set scale" sid="345788506467376" type="Elements">
+                                            <param id="0" name="Scale">0.75</param>
+                                        </action>
+                                        <action disabled="1" id="-3" name="Set position" sid="558259814487729" type="Elements">
+                                            <param id="0" name="X">Сетка.X+CurElmUnSelX*64</param>
+                                            <param id="1" name="Y">Сетка.Y+CurElmUnSelY*64</param>
+                                        </action>
+                                        <action id="5" name="Set frame" sid="656026957520969" type="Elements">
+                                            <param id="0" name="Frame number">ARR.At(CurElmSelX,CurElmSelY)</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="882887067169536" type="Elements">
+                                            <param id="0" name="Instance variable">Type</param>
+                                            <param id="1" name="Value">Elements.AnimationFrame</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="501531376296826">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="397096556928794" type="Elements">
+                                            <param id="0" name="Instance variable">PosX</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">CurElmUnSelX</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="249770009002442" type="Elements">
+                                            <param id="0" name="Instance variable">PosY</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">CurElmUnSelY</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action disabled="1" id="9" name="Set scale" sid="149693509941316" type="Elements">
+                                            <param id="0" name="Scale">0.75</param>
+                                        </action>
+                                        <action disabled="1" id="-3" name="Set position" sid="391888573607256" type="Elements">
+                                            <param id="0" name="X">Сетка.X+CurElmSelX*64</param>
+                                            <param id="1" name="Y">Сетка.Y+CurElmSelY*64</param>
+                                        </action>
+                                        <action id="5" name="Set frame" sid="617475012658220" type="Elements">
+                                            <param id="0" name="Frame number">ARR.At(CurElmUnSelX,CurElmUnSelY)</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="334468706123804" type="Elements">
+                                            <param id="0" name="Instance variable">Type</param>
+                                            <param id="1" name="Value">Elements.AnimationFrame</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="307969201534099">
+                                    <conditions />
+                                    <actions>
+                                        <action disabled="1" id="-9" name="Set value" sid="489820684639856" type="System">
+                                            <param id="0" name="Variable">GameFlag</param>
+                                            <param id="1" name="Value">2</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="293035861240710" type="System">
+                                            <param id="0" name="Variable">ElmClk</param>
+                                            <param id="1" name="Value">4</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="342752216222468" title="ПО ОКОНЧАНИИ ЗАГРУЗКИ">
+            <sub-events>
+                <event-block sid="677694533863692">
+                    <conditions>
+                        <condition id="-25" name="On loader layout complete" sid="998213325497884" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Set position" sid="455825953334694" type="Simb">
+                            <param id="0" name="X">1100</param>
+                            <param id="1" name="Y">50</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="134168143417611" type="System">
+                            <param id="0" name="Variable">I</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="984942422247611">
+                            <conditions>
+                                <condition id="-10" name="For" sid="319364929643621" type="System">
+                                    <param id="0" name="Name">I</param>
+                                    <param id="1" name="Start index">1</param>
+                                    <param id="2" name="End index">10</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="534752296886241" type="System">
+                                    <param id="0" name="Variable">I</param>
+                                    <param id="1" name="Value">I+1</param>
+                                </action>
+                                <action id="-3" name="Create object" sid="291087008040121" type="System">
+                                    <param id="0" name="Object to create">Simb</param>
+                                    <param id="1" name="Layer">0</param>
+                                    <param id="2" name="X">1100</param>
+                                    <param id="3" name="Y">22+I*32</param>
+                                </action>
+                                <action id="0" name="Set text" sid="558964861429390" type="Simb">
+                                    <param id="0" name="Text">&quot;:&quot;</param>
+                                </action>
+                                <action id="-15" name="Set visible" sid="988145431859647" type="Simb">
+                                    <param id="0" name="Visibility">1</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="763010753336406" type="Simb">
+                                    <param id="0" name="Instance variable">Index</param>
+                                    <param id="1" name="Value">I</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <comment>Заполняем размеры масок</comment>
+                        <event-group description="" sid="613445356243605" title="Размеры масок">
+                            <sub-events>
+                                <event-block sid="579677095743505">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="897840431065467" type="System">
+                                            <param id="0" name="Variable">I</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="104532221043626">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="969697167120149" type="System">
+                                                    <param id="0" name="Name">I</param>
+                                                    <param id="1" name="Start index">1</param>
+                                                    <param id="2" name="End index">6</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="135498199755312" type="System">
+                                                    <param id="0" name="Variable">I</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="938725873258372" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">1</param>
+                                                    <param id="2" name="Value">2</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="383617507819152" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">2</param>
+                                                    <param id="2" name="Value">3</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="837657410504188">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="961158652832761" type="System">
+                                                    <param id="0" name="Name">I</param>
+                                                    <param id="1" name="Start index">7</param>
+                                                    <param id="2" name="End index">12</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="410074207030673" type="System">
+                                                    <param id="0" name="Variable">I</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="212018740815542" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">1</param>
+                                                    <param id="2" name="Value">3</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="719054901329286" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">2</param>
+                                                    <param id="2" name="Value">2</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="296571296095238">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="938244029761599" type="System">
+                                                    <param id="0" name="Name">I</param>
+                                                    <param id="1" name="Start index">13</param>
+                                                    <param id="2" name="End index">14</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="353986831732694" type="System">
+                                                    <param id="0" name="Variable">I</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="228351626093764" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">1</param>
+                                                    <param id="2" name="Value">1</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="561460805311459" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">2</param>
+                                                    <param id="2" name="Value">4</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="499680406950651">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="159408142781454" type="System">
+                                                    <param id="0" name="Name">I</param>
+                                                    <param id="1" name="Start index">15</param>
+                                                    <param id="2" name="End index">16</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="256211050071302" type="System">
+                                                    <param id="0" name="Variable">I</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="459479635233725" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">1</param>
+                                                    <param id="2" name="Value">4</param>
+                                                </action>
+                                                <action id="3" name="Set at XY" sid="912069906462307" type="ArrMaskRazm">
+                                                    <param id="0" name="X">I</param>
+                                                    <param id="1" name="Y">2</param>
+                                                    <param id="2" name="Value">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-group>
+                        <comment>Инициализация масок нулями</comment>
+                        <event-block sid="231620812057474">
+                            <conditions />
+                            <actions>
+                                <action id="-9" name="Set value" sid="215917981586387" type="System">
+                                    <param id="0" name="Variable">I</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="522114752767774">
+                                    <conditions>
+                                        <condition id="-10" name="For" sid="992998606308026" type="System">
+                                            <param id="0" name="Name">I</param>
+                                            <param id="1" name="Start index">1</param>
+                                            <param id="2" name="End index">16</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Add to" sid="320895487307116" type="System">
+                                            <param id="0" name="Variable">I</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="310613537765456" type="System">
+                                            <param id="0" name="Variable">Y</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="431962048764037">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="225757151703637" type="System">
+                                                    <param id="0" name="Name">Y</param>
+                                                    <param id="1" name="Start index">1</param>
+                                                    <param id="2" name="End index">4</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="350185562296837" type="System">
+                                                    <param id="0" name="Variable">Y</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="-9" name="Set value" sid="129010336901894" type="System">
+                                                    <param id="0" name="Variable">X</param>
+                                                    <param id="1" name="Value">0</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="643604820087776">
+                                                    <conditions>
+                                                        <condition id="-10" name="For" sid="740419145895359" type="System">
+                                                            <param id="0" name="Name">X</param>
+                                                            <param id="1" name="Start index">1</param>
+                                                            <param id="2" name="End index">4</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-10" name="Add to" sid="848782257206726" type="System">
+                                                            <param id="0" name="Variable">X</param>
+                                                            <param id="1" name="Value">1</param>
+                                                        </action>
+                                                        <action id="4" name="Set at XYZ" sid="133819577979484" type="ArrMask">
+                                                            <param id="0" name="X">I</param>
+                                                            <param id="1" name="Y">X</param>
+                                                            <param id="2" name="Z">Y</param>
+                                                            <param id="3" name="Value">0</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-group description="" sid="341004387481435" title="Заполнение масок">
+                            <sub-events>
+                                <event-block sid="637006090848616">
+                                    <conditions />
+                                    <actions>
+                                        <action id="4" name="Set at XYZ" sid="738268472331564" type="ArrMask">
+                                            <param id="0" name="X">1</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="461470390795245" type="ArrMask">
+                                            <param id="0" name="X">1</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="387019797256470" type="ArrMask">
+                                            <param id="0" name="X">1</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="553942439249769" type="ArrMask">
+                                            <param id="0" name="X">2</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="504234142950676" type="ArrMask">
+                                            <param id="0" name="X">2</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="512392514244148" type="ArrMask">
+                                            <param id="0" name="X">2</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="177038145114106" type="ArrMask">
+                                            <param id="0" name="X">3</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="641735050679100" type="ArrMask">
+                                            <param id="0" name="X">3</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="301132921610335" type="ArrMask">
+                                            <param id="0" name="X">3</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="656677959185422" type="ArrMask">
+                                            <param id="0" name="X">4</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="352931678571203" type="ArrMask">
+                                            <param id="0" name="X">4</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="152392800243772" type="ArrMask">
+                                            <param id="0" name="X">4</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="534037453955642" type="ArrMask">
+                                            <param id="0" name="X">5</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="645536941553390" type="ArrMask">
+                                            <param id="0" name="X">5</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="892297656500125" type="ArrMask">
+                                            <param id="0" name="X">5</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="937432953028487" type="ArrMask">
+                                            <param id="0" name="X">6</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="585026114491856" type="ArrMask">
+                                            <param id="0" name="X">6</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="180190858687423" type="ArrMask">
+                                            <param id="0" name="X">6</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="153645186938158" type="ArrMask">
+                                            <param id="0" name="X">7</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="964026512066765" type="ArrMask">
+                                            <param id="0" name="X">7</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="870094345836255" type="ArrMask">
+                                            <param id="0" name="X">7</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="971336693695382" type="ArrMask">
+                                            <param id="0" name="X">8</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="771268868950927" type="ArrMask">
+                                            <param id="0" name="X">8</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="536191876097642" type="ArrMask">
+                                            <param id="0" name="X">8</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="954271010636618" type="ArrMask">
+                                            <param id="0" name="X">9</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="551557400287141" type="ArrMask">
+                                            <param id="0" name="X">9</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="832773678101301" type="ArrMask">
+                                            <param id="0" name="X">9</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="246175840949108" type="ArrMask">
+                                            <param id="0" name="X">10</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="364505148687935" type="ArrMask">
+                                            <param id="0" name="X">10</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="625467902620120" type="ArrMask">
+                                            <param id="0" name="X">10</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="745714118578012" type="ArrMask">
+                                            <param id="0" name="X">11</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="652120966131114" type="ArrMask">
+                                            <param id="0" name="X">11</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="712204372612650" type="ArrMask">
+                                            <param id="0" name="X">11</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="441222724014660" type="ArrMask">
+                                            <param id="0" name="X">12</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="614355305000317" type="ArrMask">
+                                            <param id="0" name="X">12</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="660882189560648" type="ArrMask">
+                                            <param id="0" name="X">12</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="566719390820569" type="ArrMask">
+                                            <param id="0" name="X">13</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="582527262189237" type="ArrMask">
+                                            <param id="0" name="X">13</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">2</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="289999380070428" type="ArrMask">
+                                            <param id="0" name="X">13</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">4</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="343567182651861" type="ArrMask">
+                                            <param id="0" name="X">14</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="166410119162643" type="ArrMask">
+                                            <param id="0" name="X">14</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">3</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="322245301551487" type="ArrMask">
+                                            <param id="0" name="X">14</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">4</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="761626623218925" type="ArrMask">
+                                            <param id="0" name="X">15</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="472511242580715" type="ArrMask">
+                                            <param id="0" name="X">15</param>
+                                            <param id="1" name="Y">2</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="256214167523183" type="ArrMask">
+                                            <param id="0" name="X">15</param>
+                                            <param id="1" name="Y">4</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="767555428151335" type="ArrMask">
+                                            <param id="0" name="X">16</param>
+                                            <param id="1" name="Y">1</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="965899947763975" type="ArrMask">
+                                            <param id="0" name="X">16</param>
+                                            <param id="1" name="Y">3</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                        <action id="4" name="Set at XYZ" sid="130477499305484" type="ArrMask">
+                                            <param id="0" name="X">16</param>
+                                            <param id="1" name="Y">4</param>
+                                            <param id="2" name="Z">1</param>
+                                            <param id="3" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-group>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-block sid="283506659852034">
+            <conditions>
+                <condition id="-6" name="Every X seconds" sid="234660327508281" type="System">
+                    <param id="0" name="Interval (seconds)">0.5</param>
+                </condition>
+                <condition id="-14" name="Compare variable" sid="500553270735413" type="System">
+                    <param id="0" name="Variable">NumGo</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">1</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-group description="" sid="318730637208563" title="Анализ готовых групп. Возврат соседей">
+                    <sub-events>
+                        <comment>АНАЛИЗ ГОТОВЫХ ГРУПП_gameflag=2</comment>
+                        <event-block sid="680289959106686">
+                            <conditions />
+                            <actions>
+                                <action id="-9" name="Set value" sid="557390574853450" type="System">
+                                    <param id="0" name="Variable">Y</param>
+                                    <param id="1" name="Value">-1</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="946753884879076" type="System">
+                                    <param id="0" name="Variable">Anlz</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action disabled="1" id="-9" name="Set value" sid="909597502131948" type="System">
+                                    <param id="0" name="Variable">GameFlag</param>
+                                    <param id="1" name="Value">4</param>
+                                </action>
+                                <action disabled="1" id="0" name="Set text" sid="222982634081846" type="txtSignal">
+                                    <param id="0" name="Text">&quot;&quot;</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <comment>Анализ по горизонтали</comment>
+                                <event-block sid="591637050038999">
+                                    <conditions>
+                                        <condition id="-10" name="For" sid="855086596273156" type="System">
+                                            <param id="0" name="Name">Y</param>
+                                            <param id="1" name="Start index">0</param>
+                                            <param id="2" name="End index">7</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Add to" sid="418988311003165" type="System">
+                                            <param id="0" name="Variable">Y</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="284233932013863" type="System">
+                                            <param id="0" name="Variable">NChBlock</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="948848450493738" type="System">
+                                            <param id="0" name="Variable">X</param>
+                                            <param id="1" name="Value">-1</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="123178396507767">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="775969605975792" type="System">
+                                                    <param id="0" name="Name">X</param>
+                                                    <param id="1" name="Start index">0</param>
+                                                    <param id="2" name="End index">11</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="180919105986136" type="System">
+                                                    <param id="0" name="Variable">X</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="819651787866551">
+                                                    <conditions>
+                                                        <condition id="-14" name="Compare variable" sid="860186997188596" type="System">
+                                                            <param id="0" name="Variable">X</param>
+                                                            <param id="1" name="Comparison">0</param>
+                                                            <param id="2" name="Value">0</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-9" name="Set value" sid="997523346476845" type="System">
+                                                            <param id="0" name="Variable">ChBlock</param>
+                                                            <param id="1" name="Value">abs(ARR.At(X,Y))</param>
+                                                        </action>
+                                                        <action disabled="1" id="0" name="Set text" sid="232056303069197" type="txtSignal">
+                                                            <param id="0" name="Text">txtSignal.Text&amp;&quot;(&quot;&amp;X&amp;&quot;,&quot;&amp;Y&amp;&quot;); &quot;</param>
+                                                        </action>
+                                                        <action disabled="1" id="0" name="Set text" sid="164142949588467" type="txtSignal">
+                                                            <param id="0" name="Text">txtSignal.Text&amp;&quot;(&quot;&amp;X&amp;&quot;,&quot;&amp;Y&amp;&quot;); &quot;</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                                <event-block sid="929767013569728">
+                                                    <conditions>
+                                                        <condition id="-14" name="Compare variable" sid="193641927845804" type="System">
+                                                            <param id="0" name="Variable">ChBlock</param>
+                                                            <param id="1" name="Comparison">0</param>
+                                                            <param id="2" name="Value">abs(ARR.At(X,Y))</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-10" name="Add to" sid="264805924051185" type="System">
+                                                            <param id="0" name="Variable">NChBlock</param>
+                                                            <param id="1" name="Value">1</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                                <event-block sid="507037992935865">
+                                                    <conditions>
+                                                        <condition id="-14" name="Compare variable" sid="879368287191338" type="System">
+                                                            <param id="0" name="Variable">ChBlock</param>
+                                                            <param id="1" name="Comparison">1</param>
+                                                            <param id="2" name="Value">abs(ARR.At(X,Y))</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions />
+                                                    <sub-events>
+                                                        <event-block sid="952959983447931">
+                                                            <conditions>
+                                                                <condition id="-14" name="Compare variable" sid="927720131584285" type="System">
+                                                                    <param id="0" name="Variable">NChBlock</param>
+                                                                    <param id="1" name="Comparison">4</param>
+                                                                    <param id="2" name="Value">2</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-9" name="Set value" sid="176577734855729" type="System">
+                                                                    <param id="0" name="Variable">Anlz</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="234814330790238" type="System">
+                                                                    <param id="0" name="Variable">L</param>
+                                                                    <param id="1" name="Value">-1</param>
+                                                                </action>
+                                                                <action disabled="1" id="0" name="Set text" sid="641316827733582" type="txtSignal">
+                                                                    <param id="0" name="Text">txtSignal.Text&amp;&quot;Найдена группа: &quot;</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="493524000053620" type="System">
+                                                                    <param id="0" name="Variable">Score</param>
+                                                                    <param id="1" name="Value">Score+2^NChBlock</param>
+                                                                </action>
+                                                            </actions>
+                                                            <sub-events>
+                                                                <event-block sid="803931834413753">
+                                                                    <conditions>
+                                                                        <condition id="-7" name="Compare instance variable" sid="564895638803591" type="Simb">
+                                                                            <param id="0" name="Instance variable">Index</param>
+                                                                            <param id="1" name="Comparison">0</param>
+                                                                            <param id="2" name="Value">ChBlock</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-10" name="Set value" sid="442223168883007" type="Simb">
+                                                                            <param id="0" name="Instance variable">Score</param>
+                                                                            <param id="1" name="Value">Simb.Score+NChBlock</param>
+                                                                        </action>
+                                                                        <action id="0" name="Set text" sid="223565290078673" type="Simb">
+                                                                            <param id="0" name="Text">&quot;: &quot;&amp;Simb.Score</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                                <event-block sid="646391874742000">
+                                                                    <conditions>
+                                                                        <condition id="-10" name="For" sid="375229000324177" type="System">
+                                                                            <param id="0" name="Name">L</param>
+                                                                            <param id="1" name="Start index">0</param>
+                                                                            <param id="2" name="End index">NChBlock-1</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-10" name="Add to" sid="965646753311188" type="System">
+                                                                            <param id="0" name="Variable">L</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                        <action id="3" name="Set at XY" sid="591907835279383" type="ARR">
+                                                                            <param id="0" name="X">X-NChBlock+L</param>
+                                                                            <param id="1" name="Y">Y</param>
+                                                                            <param id="2" name="Value">(-1)*abs(ARR.At(X-NChBlock+L,Y))</param>
+                                                                        </action>
+                                                                        <action disabled="1" id="0" name="Set text" sid="607120007624743" type="txtSignal">
+                                                                            <param id="0" name="Text">txtSignal.Text&amp;str(X-NChBlock+L)&amp;&quot;,&quot;&amp;Y&amp;&quot;; &quot;</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                            </sub-events>
+                                                        </event-block>
+                                                        <event-block sid="824370301559129">
+                                                            <conditions />
+                                                            <actions>
+                                                                <action id="-9" name="Set value" sid="938954624176389" type="System">
+                                                                    <param id="0" name="Variable">ChBlock</param>
+                                                                    <param id="1" name="Value">abs(ARR.At(X,Y))</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="961170351265513" type="System">
+                                                                    <param id="0" name="Variable">NChBlock</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                                <event-block sid="752666454803459">
+                                                    <conditions>
+                                                        <condition id="-14" name="Compare variable" sid="626331914806410" type="System">
+                                                            <param id="0" name="Variable">X</param>
+                                                            <param id="1" name="Comparison">0</param>
+                                                            <param id="2" name="Value">11</param>
+                                                        </condition>
+                                                        <condition id="-14" name="Compare variable" sid="889363686330444" type="System">
+                                                            <param id="0" name="Variable">NChBlock</param>
+                                                            <param id="1" name="Comparison">4</param>
+                                                            <param id="2" name="Value">2</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-9" name="Set value" sid="503696916256100" type="System">
+                                                            <param id="0" name="Variable">Anlz</param>
+                                                            <param id="1" name="Value">1</param>
+                                                        </action>
+                                                        <action id="-9" name="Set value" sid="737714215866671" type="System">
+                                                            <param id="0" name="Variable">L</param>
+                                                            <param id="1" name="Value">0</param>
+                                                        </action>
+                                                        <action id="-9" name="Set value" sid="365336557799185" type="System">
+                                                            <param id="0" name="Variable">Score</param>
+                                                            <param id="1" name="Value">Score+2^NChBlock</param>
+                                                        </action>
+                                                    </actions>
+                                                    <sub-events>
+                                                        <event-block sid="440958949714735">
+                                                            <conditions>
+                                                                <condition id="-7" name="Compare instance variable" sid="492689914842338" type="Simb">
+                                                                    <param id="0" name="Instance variable">Index</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">ChBlock</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-10" name="Set value" sid="706525119127543" type="Simb">
+                                                                    <param id="0" name="Instance variable">Score</param>
+                                                                    <param id="1" name="Value">Simb.Score+NChBlock</param>
+                                                                </action>
+                                                                <action id="0" name="Set text" sid="413091514187932" type="Simb">
+                                                                    <param id="0" name="Text">&quot;: &quot;&amp;Simb.Score</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                        <event-block sid="709547602891475">
+                                                            <conditions>
+                                                                <condition id="-10" name="For" sid="975536978462733" type="System">
+                                                                    <param id="0" name="Name">L</param>
+                                                                    <param id="1" name="Start index">1</param>
+                                                                    <param id="2" name="End index">NChBlock</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-10" name="Add to" sid="272530177687337" type="System">
+                                                                    <param id="0" name="Variable">L</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                                <action id="3" name="Set at XY" sid="717318788820043" type="ARR">
+                                                                    <param id="0" name="X">X-NChBlock+L</param>
+                                                                    <param id="1" name="Y">Y</param>
+                                                                    <param id="2" name="Value">(-1)*abs(ARR.At(X-NChBlock+L,Y))</param>
+                                                                </action>
+                                                                <action disabled="1" id="0" name="Set text" sid="973669072452346" type="txtSignal">
+                                                                    <param id="0" name="Text">txtSignal.Text&amp;str(X-NChBlock+L)&amp;&quot;,&quot;&amp;Y&amp;&quot;; &quot;</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <comment>Анализ по вертикали</comment>
+                                <event-block sid="470335490544841">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="448134363563941" type="System">
+                                            <param id="0" name="Variable">X</param>
+                                            <param id="1" name="Value">-1</param>
+                                        </action>
+                                        <action disabled="1" id="-9" name="Set value" sid="595248788862007" type="System">
+                                            <param id="0" name="Variable">Anlz</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="484032252728250">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="185501960641459" type="System">
+                                                    <param id="0" name="Name">X</param>
+                                                    <param id="1" name="Start index">0</param>
+                                                    <param id="2" name="End index">11</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="534418476755606" type="System">
+                                                    <param id="0" name="Variable">X</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="-9" name="Set value" sid="693593347059578" type="System">
+                                                    <param id="0" name="Variable">NChBlock</param>
+                                                    <param id="1" name="Value">0</param>
+                                                </action>
+                                                <action id="-9" name="Set value" sid="622028913884257" type="System">
+                                                    <param id="0" name="Variable">Y</param>
+                                                    <param id="1" name="Value">-1</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="707529771335199">
+                                                    <conditions>
+                                                        <condition id="-10" name="For" sid="748521632300310" type="System">
+                                                            <param id="0" name="Name">Y</param>
+                                                            <param id="1" name="Start index">0</param>
+                                                            <param id="2" name="End index">7</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-10" name="Add to" sid="428009222249785" type="System">
+                                                            <param id="0" name="Variable">Y</param>
+                                                            <param id="1" name="Value">1</param>
+                                                        </action>
+                                                    </actions>
+                                                    <sub-events>
+                                                        <event-block sid="800381627934119">
+                                                            <conditions>
+                                                                <condition id="-14" name="Compare variable" sid="809315166083368" type="System">
+                                                                    <param id="0" name="Variable">Y</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">0</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-9" name="Set value" sid="491097697267907" type="System">
+                                                                    <param id="0" name="Variable">ChBlock</param>
+                                                                    <param id="1" name="Value">abs(ARR.At(X,Y))</param>
+                                                                </action>
+                                                                <action disabled="1" id="0" name="Set text" sid="918282256790252" type="txtSignal">
+                                                                    <param id="0" name="Text">txtSignal.Text&amp;&quot;(&quot;&amp;X&amp;&quot;,&quot;&amp;Y&amp;&quot;); &quot;</param>
+                                                                </action>
+                                                                <action disabled="1" id="0" name="Set text" sid="150955804468273" type="txtSignal">
+                                                                    <param id="0" name="Text">txtSignal.Text&amp;&quot;(&quot;&amp;X&amp;&quot;,&quot;&amp;Y&amp;&quot;); &quot;</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                        <event-block sid="551215916387983">
+                                                            <conditions>
+                                                                <condition id="-14" name="Compare variable" sid="164860863009165" type="System">
+                                                                    <param id="0" name="Variable">ChBlock</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">abs(ARR.At(X,Y))</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-10" name="Add to" sid="799396945491676" type="System">
+                                                                    <param id="0" name="Variable">NChBlock</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                        <event-block sid="770711730874416">
+                                                            <conditions>
+                                                                <condition id="-14" name="Compare variable" sid="930859050459158" type="System">
+                                                                    <param id="0" name="Variable">ChBlock</param>
+                                                                    <param id="1" name="Comparison">1</param>
+                                                                    <param id="2" name="Value">abs(ARR.At(X,Y))</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions />
+                                                            <sub-events>
+                                                                <event-block sid="509412248131554">
+                                                                    <conditions>
+                                                                        <condition id="-14" name="Compare variable" sid="897463699639680" type="System">
+                                                                            <param id="0" name="Variable">NChBlock</param>
+                                                                            <param id="1" name="Comparison">4</param>
+                                                                            <param id="2" name="Value">2</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-9" name="Set value" sid="289579708534889" type="System">
+                                                                            <param id="0" name="Variable">Anlz</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                        <action id="-9" name="Set value" sid="754120149641602" type="System">
+                                                                            <param id="0" name="Variable">L</param>
+                                                                            <param id="1" name="Value">-1</param>
+                                                                        </action>
+                                                                        <action disabled="1" id="0" name="Set text" sid="360869395207638" type="txtSignal">
+                                                                            <param id="0" name="Text">txtSignal.Text&amp;&quot;Найдена группа: &quot;</param>
+                                                                        </action>
+                                                                        <action id="-9" name="Set value" sid="853672599023804" type="System">
+                                                                            <param id="0" name="Variable">Score</param>
+                                                                            <param id="1" name="Value">Score+2^NChBlock</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                    <sub-events>
+                                                                        <event-block sid="336024211588177">
+                                                                            <conditions>
+                                                                                <condition id="-7" name="Compare instance variable" sid="527585699080176" type="Simb">
+                                                                                    <param id="0" name="Instance variable">Index</param>
+                                                                                    <param id="1" name="Comparison">0</param>
+                                                                                    <param id="2" name="Value">ChBlock</param>
+                                                                                </condition>
+                                                                            </conditions>
+                                                                            <actions>
+                                                                                <action id="-10" name="Set value" sid="772639236674105" type="Simb">
+                                                                                    <param id="0" name="Instance variable">Score</param>
+                                                                                    <param id="1" name="Value">Simb.Score+NChBlock</param>
+                                                                                </action>
+                                                                                <action id="0" name="Set text" sid="258598676365347" type="Simb">
+                                                                                    <param id="0" name="Text">&quot;: &quot;&amp;Simb.Score</param>
+                                                                                </action>
+                                                                            </actions>
+                                                                        </event-block>
+                                                                        <event-block sid="852195862506910">
+                                                                            <conditions>
+                                                                                <condition id="-10" name="For" sid="297131897096927" type="System">
+                                                                                    <param id="0" name="Name">L</param>
+                                                                                    <param id="1" name="Start index">0</param>
+                                                                                    <param id="2" name="End index">NChBlock-1</param>
+                                                                                </condition>
+                                                                            </conditions>
+                                                                            <actions>
+                                                                                <action id="-10" name="Add to" sid="390510092942768" type="System">
+                                                                                    <param id="0" name="Variable">L</param>
+                                                                                    <param id="1" name="Value">1</param>
+                                                                                </action>
+                                                                                <action id="3" name="Set at XY" sid="225554489811100" type="ARR">
+                                                                                    <param id="0" name="X">X</param>
+                                                                                    <param id="1" name="Y">Y-NChBlock+L</param>
+                                                                                    <param id="2" name="Value">(-1)*abs(ARR.At(X,Y-NChBlock+L))</param>
+                                                                                </action>
+                                                                                <action disabled="1" id="0" name="Set text" sid="891695617103182" type="txtSignal">
+                                                                                    <param id="0" name="Text">txtSignal.Text&amp;X&amp;&quot;,&quot;&amp;str(Y-NChBlock+L)&amp;&quot;; &quot;</param>
+                                                                                </action>
+                                                                            </actions>
+                                                                        </event-block>
+                                                                    </sub-events>
+                                                                </event-block>
+                                                                <event-block sid="200595034801165">
+                                                                    <conditions />
+                                                                    <actions>
+                                                                        <action id="-9" name="Set value" sid="185808448883585" type="System">
+                                                                            <param id="0" name="Variable">ChBlock</param>
+                                                                            <param id="1" name="Value">abs(ARR.At(X,Y))</param>
+                                                                        </action>
+                                                                        <action id="-9" name="Set value" sid="993706064529766" type="System">
+                                                                            <param id="0" name="Variable">NChBlock</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                            </sub-events>
+                                                        </event-block>
+                                                        <event-block sid="427758148405649">
+                                                            <conditions>
+                                                                <condition id="-14" name="Compare variable" sid="643677591586004" type="System">
+                                                                    <param id="0" name="Variable">Y</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">7</param>
+                                                                </condition>
+                                                                <condition id="-14" name="Compare variable" sid="912794065038768" type="System">
+                                                                    <param id="0" name="Variable">NChBlock</param>
+                                                                    <param id="1" name="Comparison">4</param>
+                                                                    <param id="2" name="Value">2</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-9" name="Set value" sid="363830824460267" type="System">
+                                                                    <param id="0" name="Variable">Anlz</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="927422796539374" type="System">
+                                                                    <param id="0" name="Variable">L</param>
+                                                                    <param id="1" name="Value">0</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="630563061979522" type="System">
+                                                                    <param id="0" name="Variable">Score</param>
+                                                                    <param id="1" name="Value">Score+2^NChBlock</param>
+                                                                </action>
+                                                            </actions>
+                                                            <sub-events>
+                                                                <event-block sid="125546976614954">
+                                                                    <conditions>
+                                                                        <condition id="-7" name="Compare instance variable" sid="371939661139857" type="Simb">
+                                                                            <param id="0" name="Instance variable">Index</param>
+                                                                            <param id="1" name="Comparison">0</param>
+                                                                            <param id="2" name="Value">ChBlock</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-10" name="Set value" sid="680358938291271" type="Simb">
+                                                                            <param id="0" name="Instance variable">Score</param>
+                                                                            <param id="1" name="Value">Simb.Score+NChBlock</param>
+                                                                        </action>
+                                                                        <action id="0" name="Set text" sid="531443853500473" type="Simb">
+                                                                            <param id="0" name="Text">&quot;: &quot;&amp;Simb.Score</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                                <event-block sid="307327022057716">
+                                                                    <conditions>
+                                                                        <condition id="-10" name="For" sid="463275602883892" type="System">
+                                                                            <param id="0" name="Name">L</param>
+                                                                            <param id="1" name="Start index">1</param>
+                                                                            <param id="2" name="End index">NChBlock</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-10" name="Add to" sid="628234797580880" type="System">
+                                                                            <param id="0" name="Variable">L</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                        <action id="3" name="Set at XY" sid="821270449585591" type="ARR">
+                                                                            <param id="0" name="X">X</param>
+                                                                            <param id="1" name="Y">Y-NChBlock+L</param>
+                                                                            <param id="2" name="Value">(-1)*abs(ARR.At(X,Y-NChBlock+L))</param>
+                                                                        </action>
+                                                                        <action disabled="1" id="0" name="Set text" sid="672933287144174" type="txtSignal">
+                                                                            <param id="0" name="Text">txtSignal.Text&amp;X&amp;&quot;,&quot;&amp;str(Y-NChBlock+L)&amp;&quot;; &quot;</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                            </sub-events>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <comment>АНАЛИЗ ВОЗВРАТА СОСЕДЕЙ</comment>
+                                <event-block sid="636766882191366">
+                                    <conditions />
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="792824846926737">
+                                            <conditions>
+                                                <condition id="-14" name="Compare variable" sid="291802979461017" type="System">
+                                                    <param id="0" name="Variable">ElmClk</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">4</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-9" name="Set value" sid="251831121987794" type="System">
+                                                    <param id="0" name="Variable">ElmClk</param>
+                                                    <param id="1" name="Value">0</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <comment>Есть обмены и передача анализа соседей от игрока = Фишки не возвращаем, переход к сливанию групп, код продолжает управление</comment>
+                                                <comment>НЕТ ОБМЕНОВ и БЫЛА передача анализа соседей от игрока =&gt; ВЕРНУТЬ ФИШКИ</comment>
+                                                <event-block sid="890306348483740">
+                                                    <conditions>
+                                                        <condition id="-14" name="Compare variable" sid="168728874668775" type="System">
+                                                            <param id="0" name="Variable">Anlz</param>
+                                                            <param id="1" name="Comparison">0</param>
+                                                            <param id="2" name="Value">0</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions />
+                                                    <sub-events>
+                                                        <event-block sid="855868708802108">
+                                                            <conditions>
+                                                                <condition id="-7" name="Compare instance variable" sid="937304938673700" type="Elements">
+                                                                    <param id="0" name="Instance variable">PosX</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">CurElmSelX</param>
+                                                                </condition>
+                                                                <condition id="-7" name="Compare instance variable" sid="401526106593230" type="Elements">
+                                                                    <param id="0" name="Instance variable">PosY</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">CurElmSelY</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="3" name="Set at XY" sid="546575569893930" type="ARR">
+                                                                    <param id="0" name="X">CurElmSelX</param>
+                                                                    <param id="1" name="Y">CurElmSelY</param>
+                                                                    <param id="2" name="Value">ARRCompare.At(CurElmSelX,CurElmSelY)</param>
+                                                                </action>
+                                                                <action id="5" name="Set frame" sid="724882766552839" type="Elements">
+                                                                    <param id="0" name="Frame number">ARRCompare.At(CurElmSelX,CurElmSelY)</param>
+                                                                </action>
+                                                                <action id="-10" name="Set value" sid="503306570706134" type="Elements">
+                                                                    <param id="0" name="Instance variable">Type</param>
+                                                                    <param id="1" name="Value">Elements.AnimationFrame</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                        <event-block sid="107461904566311">
+                                                            <conditions>
+                                                                <condition id="-7" name="Compare instance variable" sid="413664705790431" type="Elements">
+                                                                    <param id="0" name="Instance variable">PosX</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">CurElmUnSelX</param>
+                                                                </condition>
+                                                                <condition id="-7" name="Compare instance variable" sid="998246806722955" type="Elements">
+                                                                    <param id="0" name="Instance variable">PosY</param>
+                                                                    <param id="1" name="Comparison">0</param>
+                                                                    <param id="2" name="Value">CurElmUnSelY</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="3" name="Set at XY" sid="628270799172133" type="ARR">
+                                                                    <param id="0" name="X">CurElmUnSelX</param>
+                                                                    <param id="1" name="Y">CurElmUnSelY</param>
+                                                                    <param id="2" name="Value">ARRCompare.At(CurElmUnSelX,CurElmUnSelY)</param>
+                                                                </action>
+                                                                <action id="5" name="Set frame" sid="316345333185780" type="Elements">
+                                                                    <param id="0" name="Frame number">ARRCompare.At(CurElmUnSelX,CurElmUnSelY)</param>
+                                                                </action>
+                                                                <action id="-10" name="Set value" sid="996541188268687" type="Elements">
+                                                                    <param id="0" name="Instance variable">Type</param>
+                                                                    <param id="1" name="Value">Elements.AnimationFrame</param>
+                                                                </action>
+                                                                <action id="-16" name="Wait" sid="546871279270975" type="System">
+                                                                    <param id="0" name="Seconds">0.3</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-group description="" sid="193434924689297" title="Сливание, Опадание фишек, Добавление фишек">
+                    <sub-events>
+                        <comment>GameFlag=4</comment>
+                        <event-block sid="320523167715624">
+                            <conditions />
+                            <actions>
+                                <action disabled="1" id="-9" name="Set value" sid="489576346284522" type="System">
+                                    <param id="0" name="Variable">GameFlag</param>
+                                    <param id="1" name="Value">5</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <comment>Обнаружение исчезающих фишек</comment>
+                                <event-block sid="590996137931560">
+                                    <conditions>
+                                        <condition id="-11" name="For Each" sid="220076107005132" type="System">
+                                            <param id="0" name="Object">Elements</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="469452850494519">
+                                            <conditions>
+                                                <condition id="1" name="Compare at XY" sid="914655990130316" type="ARR">
+                                                    <param id="0" name="X">Elements.PosX</param>
+                                                    <param id="1" name="Y">Elements.PosY</param>
+                                                    <param id="2" name="Comparison">2</param>
+                                                    <param id="3" name="Value">0</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="5" name="Set frame" sid="378186264117460" type="Elements">
+                                                    <param id="0" name="Frame number">11</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <comment>Опадание фишек</comment>
+                                <event-block sid="240458785318632">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="887204638100181" type="System">
+                                            <param id="0" name="Variable">X</param>
+                                            <param id="1" name="Value">-1</param>
+                                        </action>
+                                        <action id="-16" name="Wait" sid="423223674626519" type="System">
+                                            <param id="0" name="Seconds">0.3</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="169539462792370">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="224977701459370" type="System">
+                                                    <param id="0" name="Name">X</param>
+                                                    <param id="1" name="Start index">0</param>
+                                                    <param id="2" name="End index">11</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="600654831834155" type="System">
+                                                    <param id="0" name="Variable">X</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="-9" name="Set value" sid="864375183419935" type="System">
+                                                    <param id="0" name="Variable">NHole</param>
+                                                    <param id="1" name="Value">0</param>
+                                                </action>
+                                                <action id="-9" name="Set value" sid="929472449212713" type="System">
+                                                    <param id="0" name="Variable">Y</param>
+                                                    <param id="1" name="Value">8</param>
+                                                </action>
+                                                <action disabled="1" id="0" name="Set text" sid="757757526388583" type="txtSignal">
+                                                    <param id="0" name="Text">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="668869511248055">
+                                                    <conditions>
+                                                        <condition id="-10" name="For" sid="208410678164397" type="System">
+                                                            <param id="0" name="Name">&quot;&quot;</param>
+                                                            <param id="1" name="Start index">0</param>
+                                                            <param id="2" name="End index">7</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-11" name="Subtract from" sid="228757284626139" type="System">
+                                                            <param id="0" name="Variable">Y</param>
+                                                            <param id="1" name="Value">1</param>
+                                                        </action>
+                                                        <action disabled="1" id="0" name="Set text" sid="203104467332301" type="txtSignal">
+                                                            <param id="0" name="Text">txtSignal.Text&amp;Y&amp;&quot;, &quot;</param>
+                                                        </action>
+                                                    </actions>
+                                                    <sub-events>
+                                                        <event-block sid="436913902430110">
+                                                            <conditions>
+                                                                <condition id="1" name="Compare at XY" sid="812206708422246" type="ARR">
+                                                                    <param id="0" name="X">X</param>
+                                                                    <param id="1" name="Y">Y</param>
+                                                                    <param id="2" name="Comparison">2</param>
+                                                                    <param id="3" name="Value">0</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-10" name="Add to" sid="823678868323805" type="System">
+                                                                    <param id="0" name="Variable">NHole</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                            </actions>
+                                                            <sub-events>
+                                                                <event-block sid="316138581191148">
+                                                                    <conditions>
+                                                                        <condition id="-14" name="Compare variable" sid="445851526510517" type="System">
+                                                                            <param id="0" name="Variable">NHole</param>
+                                                                            <param id="1" name="Comparison">0</param>
+                                                                            <param id="2" name="Value">1</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-9" name="Set value" sid="628330287765987" type="System">
+                                                                            <param id="0" name="Variable">YHole</param>
+                                                                            <param id="1" name="Value">Y</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                            </sub-events>
+                                                        </event-block>
+                                                        <event-block sid="288769320342591">
+                                                            <conditions>
+                                                                <condition id="1" name="Compare at XY" sid="943337658076215" type="ARR">
+                                                                    <param id="0" name="X">X</param>
+                                                                    <param id="1" name="Y">Y</param>
+                                                                    <param id="2" name="Comparison">4</param>
+                                                                    <param id="3" name="Value">0</param>
+                                                                </condition>
+                                                                <condition id="-14" name="Compare variable" sid="858251306837205" type="System">
+                                                                    <param id="0" name="Variable">NHole</param>
+                                                                    <param id="1" name="Comparison">4</param>
+                                                                    <param id="2" name="Value">0</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="3" name="Set at XY" sid="642848195243755" type="ARR">
+                                                                    <param id="0" name="X">X</param>
+                                                                    <param id="1" name="Y">YHole</param>
+                                                                    <param id="2" name="Value">ARR.At(X,Y)</param>
+                                                                </action>
+                                                                <action id="-11" name="Subtract from" sid="226662890180136" type="System">
+                                                                    <param id="0" name="Variable">YHole</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                                <action id="3" name="Set at XY" sid="505466147605012" type="ARR">
+                                                                    <param id="0" name="X">X</param>
+                                                                    <param id="1" name="Y">Y</param>
+                                                                    <param id="2" name="Value">-1</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                        <event-block sid="108541915462913">
+                                            <conditions>
+                                                <condition id="-11" name="For Each" sid="967848481833995" type="System">
+                                                    <param id="0" name="Object">Elements</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions />
+                                            <sub-events>
+                                                <event-block sid="463189965760907">
+                                                    <conditions>
+                                                        <condition id="1" name="Compare at XY" sid="443067200037248" type="ARR">
+                                                            <param id="0" name="X">Elements.PosX</param>
+                                                            <param id="1" name="Y">Elements.PosY</param>
+                                                            <param id="2" name="Comparison">2</param>
+                                                            <param id="3" name="Value">0</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="5" name="Set frame" sid="602143298708036" type="Elements">
+                                                            <param id="0" name="Frame number">12</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                                <event-block sid="192964754975755">
+                                                    <conditions>
+                                                        <condition id="1" name="Compare at XY" sid="570844844797190" type="ARR">
+                                                            <param id="0" name="X">Elements.PosX</param>
+                                                            <param id="1" name="Y">Elements.PosY</param>
+                                                            <param id="2" name="Comparison">4</param>
+                                                            <param id="3" name="Value">0</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-10" name="Set value" sid="936665861800643" type="Elements">
+                                                            <param id="0" name="Instance variable">Type</param>
+                                                            <param id="1" name="Value">ARR.At(Elements.PosX,Elements.PosY)</param>
+                                                        </action>
+                                                        <action id="5" name="Set frame" sid="905240090576861" type="Elements">
+                                                            <param id="0" name="Frame number">Elements.Type</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <comment>Добавление фишек</comment>
+                                <event-block sid="539745520328683">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-16" name="Wait" sid="921674348292766" type="System">
+                                            <param id="0" name="Seconds">0.3</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="306766600755036">
+                                            <conditions>
+                                                <condition id="-11" name="For Each" sid="728213755379842" type="System">
+                                                    <param id="0" name="Object">Elements</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions />
+                                            <sub-events>
+                                                <event-block sid="567544285939659">
+                                                    <conditions>
+                                                        <condition id="1" name="Compare at XY" sid="429620402794336" type="ARR">
+                                                            <param id="0" name="X">Elements.PosX</param>
+                                                            <param id="1" name="Y">Elements.PosY</param>
+                                                            <param id="2" name="Comparison">2</param>
+                                                            <param id="3" name="Value">0</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="5" name="Set frame" sid="402366549835899" type="Elements">
+                                                            <param id="0" name="Frame number">random(1,10)</param>
+                                                        </action>
+                                                        <action id="-10" name="Set value" sid="341089810866842" type="Elements">
+                                                            <param id="0" name="Instance variable">Type</param>
+                                                            <param id="1" name="Value">Elements.AnimationFrame</param>
+                                                        </action>
+                                                        <action id="3" name="Set at XY" sid="237960281079701" type="ARR">
+                                                            <param id="0" name="X">Elements.PosX</param>
+                                                            <param id="1" name="Y">Elements.PosY</param>
+                                                            <param id="2" name="Value">Elements.Type</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-group description="" sid="777824608981009" title="Анализ на обмены">
+                    <sub-events>
+                        <comment>АНАЛИЗ НА ОБМЕНЫ_GameFlag=6</comment>
+                        <event-block sid="920254736627616">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="628399341593620" type="System">
+                                    <param id="0" name="Variable">Anlz</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="414230487593311" type="System">
+                                    <param id="0" name="Variable">NChange</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="627957184265392" type="System">
+                                    <param id="0" name="Variable">I</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="984652205232275" type="System">
+                                    <param id="0" name="Variable">FindChange</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action disabled="1" id="0" name="Set text" sid="470129227708624" type="txtSignal">
+                                    <param id="0" name="Text">&quot;&quot;</param>
+                                </action>
+                                <action disabled="1" id="-9" name="Set value" sid="436151448286990" type="System">
+                                    <param id="0" name="Variable">GameFlag</param>
+                                    <param id="1" name="Value">2</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="207335010368515" type="System">
+                                    <param id="0" name="Variable">GameFlag</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <comment>Перебор фишек</comment>
+                                <event-block sid="304759531544708">
+                                    <conditions>
+                                        <condition id="-10" name="For" sid="111394153557036" type="System">
+                                            <param id="0" name="Name">I</param>
+                                            <param id="1" name="Start index">1</param>
+                                            <param id="2" name="End index">10</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Add to" sid="926825905313770" type="System">
+                                            <param id="0" name="Variable">I</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="602291322309996" type="System">
+                                            <param id="0" name="Variable">K</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <comment>Перебор масок</comment>
+                                        <event-block sid="544438458900452">
+                                            <conditions>
+                                                <condition id="-10" name="For" sid="470506458009330" type="System">
+                                                    <param id="0" name="Name">K</param>
+                                                    <param id="1" name="Start index">1</param>
+                                                    <param id="2" name="End index">16</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-10" name="Add to" sid="515117157733437" type="System">
+                                                    <param id="0" name="Variable">K</param>
+                                                    <param id="1" name="Value">1</param>
+                                                </action>
+                                                <action id="-9" name="Set value" sid="103255310683207" type="System">
+                                                    <param id="0" name="Variable">Y</param>
+                                                    <param id="1" name="Value">-1</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="402529828902595">
+                                                    <conditions>
+                                                        <condition id="-10" name="For" sid="107115322816580" type="System">
+                                                            <param id="0" name="Name">Y</param>
+                                                            <param id="1" name="Start index">0</param>
+                                                            <param id="2" name="End index">7-ArrMaskRazm.At(K,2)+1</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-10" name="Add to" sid="389532849952275" type="System">
+                                                            <param id="0" name="Variable">Y</param>
+                                                            <param id="1" name="Value">1</param>
+                                                        </action>
+                                                        <action id="-9" name="Set value" sid="597818360334106" type="System">
+                                                            <param id="0" name="Variable">X</param>
+                                                            <param id="1" name="Value">-1</param>
+                                                        </action>
+                                                    </actions>
+                                                    <sub-events>
+                                                        <event-block sid="713551165977742">
+                                                            <conditions>
+                                                                <condition id="-10" name="For" sid="282920487338756" type="System">
+                                                                    <param id="0" name="Name">X</param>
+                                                                    <param id="1" name="Start index">0</param>
+                                                                    <param id="2" name="End index">11-ArrMaskRazm.At(K,1)+1</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-10" name="Add to" sid="682367860222220" type="System">
+                                                                    <param id="0" name="Variable">X</param>
+                                                                    <param id="1" name="Value">1</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="143997745811085" type="System">
+                                                                    <param id="0" name="Variable">NMask</param>
+                                                                    <param id="1" name="Value">0</param>
+                                                                </action>
+                                                                <action id="-9" name="Set value" sid="757840713985703" type="System">
+                                                                    <param id="0" name="Variable">My</param>
+                                                                    <param id="1" name="Value">0</param>
+                                                                </action>
+                                                            </actions>
+                                                            <sub-events>
+                                                                <event-block sid="338840158470724">
+                                                                    <conditions>
+                                                                        <condition id="-10" name="For" sid="593751025419699" type="System">
+                                                                            <param id="0" name="Name">My</param>
+                                                                            <param id="1" name="Start index">1</param>
+                                                                            <param id="2" name="End index">ArrMaskRazm.At(K,2)</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-10" name="Add to" sid="351213689457117" type="System">
+                                                                            <param id="0" name="Variable">My</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                        <action id="-9" name="Set value" sid="457739943555122" type="System">
+                                                                            <param id="0" name="Variable">Mx</param>
+                                                                            <param id="1" name="Value">0</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                    <sub-events>
+                                                                        <event-block sid="841511081503018">
+                                                                            <conditions>
+                                                                                <condition id="-10" name="For" sid="386930947275792" type="System">
+                                                                                    <param id="0" name="Name">Mx</param>
+                                                                                    <param id="1" name="Start index">1</param>
+                                                                                    <param id="2" name="End index">ArrMaskRazm.At(K,1)</param>
+                                                                                </condition>
+                                                                            </conditions>
+                                                                            <actions>
+                                                                                <action id="-10" name="Add to" sid="256951554074603" type="System">
+                                                                                    <param id="0" name="Variable">Mx</param>
+                                                                                    <param id="1" name="Value">1</param>
+                                                                                </action>
+                                                                            </actions>
+                                                                            <sub-events>
+                                                                                <event-block sid="337141108224498">
+                                                                                    <conditions>
+                                                                                        <condition id="2" name="Compare at XYZ" sid="456095141407402" type="ArrMask">
+                                                                                            <param id="0" name="X">K</param>
+                                                                                            <param id="1" name="Y">Mx</param>
+                                                                                            <param id="2" name="Z">My</param>
+                                                                                            <param id="3" name="Comparison">0</param>
+                                                                                            <param id="4" name="Value">1</param>
+                                                                                        </condition>
+                                                                                        <condition id="1" name="Compare at XY" sid="248722314241603" type="ARR">
+                                                                                            <param id="0" name="X">X+Mx-1</param>
+                                                                                            <param id="1" name="Y">Y+My-1</param>
+                                                                                            <param id="2" name="Comparison">0</param>
+                                                                                            <param id="3" name="Value">I</param>
+                                                                                        </condition>
+                                                                                    </conditions>
+                                                                                    <actions>
+                                                                                        <action id="-10" name="Add to" sid="309316936411690" type="System">
+                                                                                            <param id="0" name="Variable">NMask</param>
+                                                                                            <param id="1" name="Value">1</param>
+                                                                                        </action>
+                                                                                    </actions>
+                                                                                </event-block>
+                                                                            </sub-events>
+                                                                        </event-block>
+                                                                    </sub-events>
+                                                                </event-block>
+                                                                <event-block sid="594205910031556">
+                                                                    <conditions>
+                                                                        <condition id="-14" name="Compare variable" sid="808286793458514" type="System">
+                                                                            <param id="0" name="Variable">NMask</param>
+                                                                            <param id="1" name="Comparison">0</param>
+                                                                            <param id="2" name="Value">3</param>
+                                                                        </condition>
+                                                                    </conditions>
+                                                                    <actions>
+                                                                        <action id="-10" name="Add to" sid="186425284272744" type="System">
+                                                                            <param id="0" name="Variable">NChange</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                        <action id="-10" name="Add to" sid="397422945323051" type="System">
+                                                                            <param id="0" name="Variable">FindChange</param>
+                                                                            <param id="1" name="Value">1</param>
+                                                                        </action>
+                                                                        <action disabled="1" id="0" name="Set text" sid="677456459475576" type="txtSignal">
+                                                                            <param id="0" name="Text">txtSignal.Text&amp;&quot;Обмен по маске: &quot;&amp;K&amp;&quot; в  &quot;&amp;&quot;(&quot;&amp;X&amp;&quot;,&quot;&amp;Y&amp;&quot;) фишка &quot;&amp;I&amp;&quot;;&quot;</param>
+                                                                        </action>
+                                                                    </actions>
+                                                                </event-block>
+                                                            </sub-events>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block sid="967033615712918">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="867250753183060" type="System">
+                                            <param id="0" name="Variable">FindChange</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="471905017058601" type="System">
+                                            <param id="0" name="Variable">NumGo</param>
+                                            <param id="1" name="Value">2</param>
+                                        </action>
+                                        <action id="0" name="Set text" sid="562356968647132" type="НовоеПоле">
+                                            <param id="0" name="Text">&quot;Нет обменов! Ваша игра закончена!&quot;</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="654435613417623" type="System">
+                                            <param id="0" name="Variable">Score</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+            </sub-events>
+        </event-block>
+        <event-block sid="111478226459191">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="161423615584246" type="System" />
+            </conditions>
+            <actions>
+                <action id="0" name="Set text" sid="188665268723627" type="txtScore">
+                    <param id="0" name="Text">&quot;Счёт: &quot;&amp;Score</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>
